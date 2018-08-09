@@ -1,0 +1,8 @@
+.DS_STORE
+.circlci
+node_modules
+seeds
+.gitignore
+README.md
+.env
+.git
