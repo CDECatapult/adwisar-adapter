@@ -1,0 +1,16 @@
+{
+  "time": 1532702510179,
+  "machines": [
+    {
+      "vendor": "Airbus",
+      "id": "ConnectingUnit",
+      "serial_number": "ConnectingUnitSerial",
+      "uuid": "http://www.appsist.de/ontology/demonstrator/Demonstrator",
+      "data": {
+        "Sidepanel2PlacedInRHGroove": false,
+        "Tube2PlacedInCorrectPosition": false
+      },
+      "status": { "code": 0 }
+    }
+  ]
+}

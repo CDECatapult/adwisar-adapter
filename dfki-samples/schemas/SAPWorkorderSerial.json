@@ -1,0 +1,18 @@
+{
+  "vendor": "ZAL",
+  "id": "SAP",
+  "serial_number": "SAPWorkorderSerial",
+  "uuid": "http://www.appsist.de/ontology/demonstrator/Demonstrator",
+  "station_id": "SmallDemonstrator",
+  "site_id": "PublicDemonstrator",
+  "site_uuid": "",
+  "schema": [
+    {
+      "name": "SAPWorkOrderPublicDemonstratorReceived",
+      "type": "bool",
+      "unit": "",
+      "visualization_type": "on_off",
+      "visualization_level": "never"
+    }
+  ]
+}

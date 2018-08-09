@@ -1,0 +1,13 @@
+{
+  "time": 1532702674335,
+  "machines": [
+    {
+      "vendor": "ZAL",
+      "id": "SAP",
+      "serial_number": "SAPWorkorderSerial",
+      "uuid": "http://www.appsist.de/ontology/demonstrator/Demonstrator",
+      "data": { "SAPWorkOrderPublicDemonstratorReceived": false },
+      "status": { "code": 0 }
+    }
+  ]
+}
