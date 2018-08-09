@@ -8,8 +8,8 @@ module.exports = envalid.cleanEnv(
     HOST: host({ default: '0.0.0.0' }),
     PORT: port({ default: 3000 }),
     LOG_LEVEL: str({ default: 'info', devDefault: 'debug' }),
-    ADWISAR_SCHEMA_URL: url(),
-    ADWISAR_DATA_URL: url(),
+    ADWISAR_SCHEMA_ENDPOINT: url(),
+    ADWISAR_DATA_ENDPOINT: url(),
   },
   {
     strict: true,
