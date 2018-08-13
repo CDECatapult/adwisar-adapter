@@ -1,21 +1,34 @@
-###############################################################################
-# Test image                                                                 #
-###############################################################################
-FROM node:8.11.3-alpine
+#-------------------------------------------------------------------------------
+FROM node:8.11.3-alpine AS base
 
-# Allow log level to be controlled. Uses an argument name that is different
-# from the existing environment variable, otherwise the environment variable
-# shadows the argument.
-ARG LOGLEVEL
-ENV NPM_CONFIG_LOGLEVEL ${LOGLEVEL}
-
-# Copy jq script that can generate package.json files from package-lock.json
-# files.
 WORKDIR /dfki-adapter
 
-# Install base dependencies
-COPY . .
+#-------------------------------------------------------------------------------
+FROM base AS dependencies
+
+COPY package-lock.json .
+COPY package.json .
+RUN npm install
+
+#-------------------------------------------------------------------------------
+FROM dependencies AS build
+
+COPY app app
+COPY dfki-samples dfki-samples
+COPY .eslintrc.json .
+COPY .prettierrc .
+COPY test.js .
+
+RUN npm run lint
+RUN npm run test
+
+#-------------------------------------------------------------------------------
+FROM base AS release
+
+COPY --from=dependencies /dfki-adapter/package-lock.json .
+COPY --from=dependencies /dfki-adapter/package.json .
 RUN npm install --production
 
-EXPOSE 6000
-CMD ["npm", "start"]
+COPY --from=build /dfki-adapter/app app
+
+CMD ["node", "."]
