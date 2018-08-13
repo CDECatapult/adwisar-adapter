@@ -1,55 +1,115 @@
 const test = require('ava')
 const pino = require('pino')
 const request = require('supertest')
+const nock = require('nock')
 const { createServer } = require('./app/server')
+const schemaConnectingUnit = require('./dfki-samples/schemas/ConnectingUnitSerial.json')
 
-const env = {}
+const env = {
+  ADWISAR_SCHEMA_ENDPOINT: 'http://adwisar/schema',
+  ADWISAR_DATA_ENDPOINT: 'http://adwisar/data',
+}
 
 const logger = pino({ level: 'silent' })
 
-test('/health', async t => {
+test('health', async t => {
   const res = await request(createServer(env, logger)).get('/health')
   t.is(res.type, 'application/json')
   t.is(res.text, JSON.stringify({ status: 'ok' }))
 })
 
-test('/txmessagestatus', async t => {
+test('txmessagestatus', async t => {
   const res = await request(createServer(env, logger)).post('/txmessagestatus')
   t.is(res.text, '')
 })
 
-// test('/rxmessage', async t => {
-//   const opts = (payload, fport) => ({
-//     method: 'POST',
-//     uri: `${baseUrl}/rxmessage`,
-//     headers: {
-//       'Content-Type': 'application/vnd.kerlink.iot-v1+json',
-//     },
-//     body: {
-//       userdata: { payload, fport },
-//       devEui: '4883c7df30051784',
-//       msgId: '5b3234fb4f05a8000efb4f36',
-//     },
-//     json: true,
-//   })
-//
-//   const resLow = await rp(opts('AA==', 1))
-//   t.is(resLow.devEui, '4883c7df30051784')
-//   t.is(resLow.msgId, '5b3234fb4f05a8000efb4f36')
-//   t.is(resLow.event, 'low')
-//
-//   const resHigh = await rp(opts('AQ==', 1))
-//   t.is(resHigh.devEui, '4883c7df30051784')
-//   t.is(resHigh.msgId, '5b3234fb4f05a8000efb4f36')
-//   t.is(resHigh.event, 'high')
-//
-//   const resShock = await rp(opts('AQ==', 2))
-//   t.is(resShock.devEui, '4883c7df30051784')
-//   t.is(resShock.msgId, '5b3234fb4f05a8000efb4f36')
-//   t.is(resShock.event, 'shock')
-//
-//   const res3 = await rp(opts('LTQ0MiwxMDAwLDIwMDAsMjAwMA==', 3))
-//   t.is(res3.devEui, '4883c7df30051784')
-//   t.is(res3.msgId, '5b3234fb4f05a8000efb4f36')
-//   t.deepEqual(res3.event, 'reset')
-// })
+test('Send messages to adwisar', async t => {
+  t.plan(12)
+
+  const adwisar = nock('http://adwisar')
+  const server = request(createServer(env, logger))
+
+  adwisar
+    .post('/schema', body => {
+      t.deepEqual(body, schemaConnectingUnit)
+      return true
+    })
+    .reply(200)
+    .post('/data', body => {
+      const data = {
+        Sidepanel2PlacedInRHGroove: true,
+        Tube2PlacedInCorrectPosition: false,
+      }
+      t.deepEqual(body.machines[0].data, data)
+      return true
+    })
+    .reply(200)
+
+  const res1 = await server
+    .post('/rxmessage')
+    .set('Content-Type', 'application/vnd.kerlink.iot-v1+json')
+    .send({
+      userdata: { payload: 'AA==', fport: 1 },
+      devEui: '4883c7df30051526',
+      msgId: '5b3234fb4f05a8000efb4f36',
+    })
+
+  t.is(res1.text, '')
+  t.true(adwisar.isDone())
+
+  adwisar
+    .post('/schema', body => {
+      t.deepEqual(body, schemaConnectingUnit)
+      return true
+    })
+    .reply(200)
+    .post('/data', body => {
+      const data = {
+        Sidepanel2PlacedInRHGroove: true,
+        Tube2PlacedInCorrectPosition: true,
+      }
+      t.deepEqual(body.machines[0].data, data)
+      return true
+    })
+    .reply(200)
+
+  const res2 = await server
+    .post('/rxmessage')
+    .set('Content-Type', 'application/vnd.kerlink.iot-v1+json')
+    .send({
+      userdata: { payload: '', fport: 1 },
+      devEui: '4883c7df3005148c',
+      msgId: '5b3234fb4f05a8000efb4f37',
+    })
+
+  t.is(res2.text, '')
+  t.true(adwisar.isDone())
+
+  adwisar
+    .post('/schema', body => {
+      t.deepEqual(body, schemaConnectingUnit)
+      return true
+    })
+    .reply(200)
+    .post('/data', body => {
+      const data = {
+        Sidepanel2PlacedInRHGroove: false,
+        Tube2PlacedInCorrectPosition: true,
+      }
+      t.deepEqual(body.machines[0].data, data)
+      return true
+    })
+    .reply(200)
+
+  const res3 = await server
+    .post('/rxmessage')
+    .set('Content-Type', 'application/vnd.kerlink.iot-v1+json')
+    .send({
+      userdata: { payload: 'AQ==', fport: 1 },
+      devEui: '4883c7df30051526',
+      msgId: '5b3234fb4f05a8000efb4f38',
+    })
+
+  t.is(res3.text, '')
+  t.true(adwisar.isDone())
+})
