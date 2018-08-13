@@ -4,45 +4,6 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const pinoHttp = require('pino-http')
 
-const getSchemaMessage = (vendor, id, serial_number, schema) => ({
-  time: +new Date(),
-  schemas: [
-    {
-      vendor,
-      id,
-      serial_number,
-      uuid: 'http://www.appsist.de/ontology/demonstrator/Demonstrator',
-      station_id: 'SmallDemonstrator',
-      site_id: 'PublicDemonstrator',
-      schema,
-    },
-  ],
-})
-
-const getSchema = name => ({
-  name,
-  type: 'bool',
-  unit: '',
-  visualization_type: 'on_off',
-  visualization_level: 'never',
-})
-
-const getDataMessage = (vendor, id, serial_number, data) => ({
-  time: +new Date(),
-  machines: [
-    {
-      vendor,
-      id,
-      serial_number,
-      uuid: 'http://www.appsist.de/ontology/demonstrator/Demonstrator',
-      data,
-      status: { code: 0 },
-    },
-  ],
-})
-
-const getData = (name, payload) => ({ [name]: getValue(payload) })
-
 const getValue = payload => {
   const buffer = Buffer.from(payload, 'base64')
   switch (buffer[0]) {
@@ -55,39 +16,28 @@ const getValue = payload => {
   }
 }
 
-const getInfos = devEui => {
+const setState = (devEui, payload) => {
   switch (devEui) {
     // Panel 1 - Sensor one (SM1)
-    case '4883C7DF30051526':
-    case '4883C7DF30051526'.toLowerCase():
-      return {
-        vendor: 'Airbus',
-        id: 'ConnectingUnit',
-        serial_number: 'ConnectingUnitSerial',
-        name: 'Sidepanel2PlacedInRHGroove',
-      }
+    case '4883c7df30051526':
+      state.Sidepanel2PlacedInRHGroove = !getValue(payload)
+      return true
     // Panel 2 - Sensor two (SM2)
-    case '4883C7DF3005179E':
-    case '4883C7DF3005179E'.toLowerCase():
+    case '4883c7df3005179e':
       return null
     // Cap 1 (C1)
-    case '4883C7DF30051785':
-    case '4883C7DF30051785'.toLowerCase():
-      return {
-        vendor: 'Airbus',
-        id: 'ConnectingUnit',
-        serial_number: 'ConnectingUnitSerial',
-        name: 'Tube2PlacedInCorrectPosition',
-      }
+    case '4883c7df3005148c':
+      state.Tube2PlacedInCorrectPosition = true
+      return true
     default:
       return null
   }
 }
 
-// fport = 1, payload = 0 : LOW
-// fport = 1, payload = 1 : HIGH
-// fport = 2, payload = 1 : shock
-// fport = 3 : reset
+const state = {
+  Sidepanel2PlacedInRHGroove: false,
+  Tube2PlacedInCorrectPosition: false,
+}
 
 function createServer(host, port, dfki, logger) {
   const app = express()
@@ -110,23 +60,16 @@ function createServer(host, port, dfki, logger) {
     logger.info('rxmessage: ', payload, fport, devEui, msgId)
 
     // For the small demonstrator we only need to handle low/high
+    // fport = 1, payload = 0 : LOW
+    // fport = 1, payload = 1 : HIGH
+    // fport = 2, payload = 1 : shock
+    // fport = 3 : reset
     if (fport === 1) {
-      const { vendor, id, serial_number, name } = getInfos(devEui)
-      const schemaMessage = getSchemaMessage(
-        vendor,
-        id,
-        serial_number,
-        getSchema(name)
-      )
-      const dataMessage = getDataMessage(
-        vendor,
-        id,
-        serial_number,
-        getData(name, payload)
-      )
-
-      logger.info('Sending to DFKI', schemaMessage, dataMessage)
-      await dfki.send(schemaMessage, dataMessage)
+      const updated = setState(devEui, payload)
+      if (updated) {
+        logger.info('Sending to DFKI', state)
+        await dfki.send(state)
+      }
     }
 
     res.status(204).send()
