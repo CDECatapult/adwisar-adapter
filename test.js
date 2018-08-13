@@ -6,8 +6,10 @@ const { createServer } = require('./app/server')
 const schemaConnectingUnit = require('./dfki-samples/schemas/ConnectingUnitSerial.json')
 
 const env = {
-  ADWISAR_SCHEMA_ENDPOINT: 'http://adwisar/schema',
-  ADWISAR_DATA_ENDPOINT: 'http://adwisar/data',
+  ADWISAR_ENDPOINT: 'http://adwisar',
+  PANEL1_DEV_EUI: '4883c7df30051526',
+  PANEL2_DEV_EUI: '4883c7df3005179e',
+  CAP1_DEV_EUI: '4883c7df3005148c',
 }
 
 const logger = pino({ level: 'silent' })

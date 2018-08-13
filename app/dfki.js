@@ -11,9 +11,9 @@ const post = (uri, body) =>
     json: true,
   })
 
-module.exports = (schemaEndpoint, dataEndpoint) => ({
+module.exports = adwisarEndpoint => ({
   async send(data) {
-    await post(schemaEndpoint, {
+    await post(`${adwisarEndpoint}/schema`, {
       vendor: 'Airbus',
       id: 'ConnectingUnit',
       serial_number: 'ConnectingUnitSerial',
@@ -38,7 +38,7 @@ module.exports = (schemaEndpoint, dataEndpoint) => ({
         },
       ],
     })
-    await post(dataEndpoint, {
+    await post(`${adwisarEndpoint}/data`, {
       time: +new Date(),
       machines: [
         {

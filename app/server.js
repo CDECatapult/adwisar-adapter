@@ -23,22 +23,19 @@ const state = {
 }
 
 function createServer(env, logger) {
-  const dfki = createDFKIClient(
-    env.ADWISAR_SCHEMA_ENDPOINT,
-    env.ADWISAR_DATA_ENDPOINT
-  )
+  const dfki = createDFKIClient(env.ADWISAR_ENDPOINT)
 
   const setState = (devEui, payload) => {
     switch (devEui) {
       // Panel 1 - Sensor one (SM1)
-      case '4883c7df30051526':
+      case env.PANEL1_DEV_EUI:
         state.Sidepanel2PlacedInRHGroove = !getValue(payload)
         return true
       // Panel 2 - Sensor two (SM2)
-      case '4883c7df3005179e':
+      case env.PANEL2_DEV_EUI:
         return null
       // Cap 1 (C1)
-      case '4883c7df3005148c':
+      case env.CAP1_DEV_EUI:
         state.Tube2PlacedInCorrectPosition = true
         return true
       default:
