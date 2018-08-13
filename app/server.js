@@ -3,6 +3,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 const express = require('express')
 const bodyParser = require('body-parser')
 const pinoHttp = require('pino-http')
+const createDFKIClient = require('./dfki')
 
 const getValue = payload => {
   const buffer = Buffer.from(payload, 'base64')
@@ -16,30 +17,35 @@ const getValue = payload => {
   }
 }
 
-const setState = (devEui, payload) => {
-  switch (devEui) {
-    // Panel 1 - Sensor one (SM1)
-    case '4883c7df30051526':
-      state.Sidepanel2PlacedInRHGroove = !getValue(payload)
-      return true
-    // Panel 2 - Sensor two (SM2)
-    case '4883c7df3005179e':
-      return null
-    // Cap 1 (C1)
-    case '4883c7df3005148c':
-      state.Tube2PlacedInCorrectPosition = true
-      return true
-    default:
-      return null
-  }
-}
-
 const state = {
   Sidepanel2PlacedInRHGroove: false,
   Tube2PlacedInCorrectPosition: false,
 }
 
-function createServer(host, port, dfki, logger) {
+function createServer(env, logger) {
+  const dfki = createDFKIClient(
+    env.ADWISAR_SCHEMA_ENDPOINT,
+    env.ADWISAR_DATA_ENDPOINT
+  )
+
+  const setState = (devEui, payload) => {
+    switch (devEui) {
+      // Panel 1 - Sensor one (SM1)
+      case '4883c7df30051526':
+        state.Sidepanel2PlacedInRHGroove = !getValue(payload)
+        return true
+      // Panel 2 - Sensor two (SM2)
+      case '4883c7df3005179e':
+        return null
+      // Cap 1 (C1)
+      case '4883c7df3005148c':
+        state.Tube2PlacedInCorrectPosition = true
+        return true
+      default:
+        return null
+    }
+  }
+
   const app = express()
 
   app.use(
@@ -92,11 +98,12 @@ function createServer(host, port, dfki, logger) {
     res.send({ error: err.message })
   })
 
-  app.listen(port, host, err => {
+  const listener = app.listen(env.PORT, env.HOST, err => {
     if (err) {
       logger.error('Binding failed', err)
     } else {
-      logger.info(`Server listening on ${host}:${port}`)
+      const { address, port } = listener.address()
+      logger.info(`Server listening on ${address}:${port}`)
     }
   })
 

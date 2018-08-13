@@ -10,6 +10,9 @@ module.exports = envalid.cleanEnv(
     LOG_LEVEL: str({ default: 'info', devDefault: 'debug' }),
     ADWISAR_SCHEMA_ENDPOINT: url(),
     ADWISAR_DATA_ENDPOINT: url(),
+    PANEL1_DEV_EUI: str({ default: '4883c7df30051526' }),
+    PANEL2_DEV_EUI: str({ default: '4883c7df3005179e' }),
+    CAP1_DEV_EUI: str({ default: '4883c7df3005148c' }),
   },
   {
     strict: true,

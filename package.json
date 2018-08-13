@@ -17,7 +17,9 @@
     "envalid": "^4.1.4",
     "express": "^4.16.3",
     "pino": "^4.16.0",
-    "pino-http": "^3.2.1"
+    "pino-http": "^3.2.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "ava": "^0.25.0",
@@ -26,6 +28,7 @@
     "eslint-plugin-prettier": "^2.6.2",
     "nodemon": "^1.17.2",
     "pino-colada": "^1.4.4",
-    "prettier": "^1.11.1"
+    "prettier": "^1.11.1",
+    "supertest": "^3.1.0"
   }
 }
