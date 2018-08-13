@@ -1,6 +1,6 @@
-# DFKI Adapter
+# Adwisar Adapter
 
-Receive the sensor data from Kerlink and convert them to match DFKI API
+Receive the sensor data from Kerlink and send them to Adwisar.
 
 ## Dependencies
 
@@ -29,9 +29,9 @@ For development:
 
     # from the project root folder
     # This will run the tests and build the project in production mode
-    docker build -t dfki-adapter
+    docker build -t adwisar-adapter
     # This will start the project on port 3000 by default
-    docker run dfki-adapter
+    docker run adwisar-adapter
 
 ### Environment
 

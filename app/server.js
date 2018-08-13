@@ -3,7 +3,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 const express = require('express')
 const bodyParser = require('body-parser')
 const pinoHttp = require('pino-http')
-const createDFKIClient = require('./dfki')
+const createAdwisarClient = require('./adwisar')
 
 const getValue = payload => {
   const buffer = Buffer.from(payload, 'base64')
@@ -23,7 +23,7 @@ const state = {
 }
 
 function createServer(env, logger) {
-  const dfki = createDFKIClient(env.ADWISAR_ENDPOINT)
+  const adwisar = createAdwisarClient(env.ADWISAR_ENDPOINT)
 
   const setState = (devEui, payload) => {
     switch (devEui) {
@@ -70,8 +70,8 @@ function createServer(env, logger) {
     if (fport === 1) {
       const updated = setState(devEui, payload)
       if (updated) {
-        logger.info('Sending to DFKI', state)
-        await dfki.send(state)
+        logger.info('Sending to Adwisar', state)
+        await adwisar.send(state)
       }
     }
 

@@ -1,7 +1,7 @@
 {
-  "name": "dfki-adapter",
+  "name": "adwisar-adapter",
   "version": "1.0.0",
-  "description": "Receive the sensor data from Kerlink and convert them to match DFKI API",
+  "description": "Receive the sensor data from Kerlink and send them to Adwisar",
   "main": "app/index.js",
   "author": "Anthony Garcia <anthony.garcia@digicatapult.org.uk>",
   "license": "UNLICENSED",

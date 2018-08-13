@@ -3,7 +3,7 @@ const pino = require('pino')
 const request = require('supertest')
 const nock = require('nock')
 const { createServer } = require('./app/server')
-const schemaConnectingUnit = require('./dfki-samples/schemas/ConnectingUnitSerial.json')
+const schemaConnectingUnit = require('./adwisar-samples/schemas/ConnectingUnitSerial.json')
 
 const env = {
   ADWISAR_ENDPOINT: 'http://adwisar',
