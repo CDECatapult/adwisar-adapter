@@ -29,7 +29,7 @@ function createServer(env, logger) {
     switch (devEui) {
       // Panel 1 - Sensor one (SM1)
       case env.PANEL1_DEV_EUI:
-        state.Sidepanel2PlacedInRHGroove = !getValue(payload)
+        state.Sidepanel2PlacedInRHGroove = getValue(payload)
         return true
       // Panel 2 - Sensor two (SM2)
       case env.PANEL2_DEV_EUI:
