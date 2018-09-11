@@ -47,6 +47,10 @@ module.exports = envalid.cleanEnv(
       default: '4883c7df3005148c',
       desc: 'The EUI of the device placed at Cap1',
     }),
+    RESET_DEV_EUI: devEui({
+      default: '4883c7df3005179e',
+      desc: 'The EUI of the device that reset the state',
+    }),
   },
   {
     strict: true,

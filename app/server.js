@@ -17,13 +17,13 @@ const getValue = payload => {
   }
 }
 
-const state = {
-  Sidepanel2PlacedInRHGroove: false,
-  Tube2PlacedInCorrectPosition: false,
-}
-
 function createServer(env, logger) {
   const adwisar = createAdwisarClient(env.ADWISAR_ENDPOINT)
+
+  const state = {
+    Sidepanel2PlacedInRHGroove: false,
+    Tube2PlacedInCorrectPosition: false,
+  }
 
   const setState = (devEui, payload) => {
     switch (devEui) {
@@ -67,12 +67,26 @@ function createServer(env, logger) {
     // fport = 1, payload = 1 : HIGH
     // fport = 2, payload = 1 : shock
     // fport = 3 : reset
-    if (fport === 1) {
-      const updated = setState(devEui, payload)
-      if (updated) {
-        logger.info('Sending to Adwisar', state)
-        await adwisar.send(state)
-      }
+    switch (fport) {
+      case 1:
+        {
+          const updated = setState(devEui, payload)
+          if (updated) {
+            logger.info('Sending to Adwisar', state)
+            await adwisar.send(state)
+          }
+        }
+        break
+      case 3:
+        {
+          if (devEui === env.RESET_DEV_EUI) {
+            state.Sidepanel2PlacedInRHGroove = false
+            state.Tube2PlacedInCorrectPosition = false
+            logger.info('Sending reset to Adwisar', state)
+            await adwisar.send(state)
+          }
+        }
+        break
     }
 
     res.status(204).send()
