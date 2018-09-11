@@ -51,7 +51,7 @@ test('Send messages to adwisar', async t => {
     .post('/rxmessage')
     .set('Content-Type', 'application/vnd.kerlink.iot-v1+json')
     .send({
-      userdata: { payload: 'AA==', fport: 1 },
+      userdata: { payload: 'AQ==', fport: 1 },
       devEui: '4883c7df30051526',
       msgId: '5b3234fb4f05a8000efb4f36',
     })
@@ -107,7 +107,7 @@ test('Send messages to adwisar', async t => {
     .post('/rxmessage')
     .set('Content-Type', 'application/vnd.kerlink.iot-v1+json')
     .send({
-      userdata: { payload: 'AQ==', fport: 1 },
+      userdata: { payload: 'AA==', fport: 1 },
       devEui: '4883c7df30051526',
       msgId: '5b3234fb4f05a8000efb4f38',
     })
