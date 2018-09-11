@@ -36,7 +36,7 @@ function createServer(env, logger) {
         return null
       // Cap 1 (C1)
       case env.CAP1_DEV_EUI:
-        state.Tube2PlacedInCorrectPosition = true
+        state.Tube2PlacedInCorrectPosition = getValue(payload)
         return true
       default:
         return null
