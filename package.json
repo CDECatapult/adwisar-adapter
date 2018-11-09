@@ -9,7 +9,7 @@
   "scripts": {
     "start": "NODE_ENV=production node .",
     "dev": "nodemon app/index.js | pino-colada",
-    "test": "ava -T 2000",
+    "test": "ava",
     "lint": "eslint ."
   },
   "dependencies": {
