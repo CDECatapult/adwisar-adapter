@@ -2,7 +2,16 @@
 
 Receive the sensor data from Kerlink and send them to Adwisar.
 
-## Dependencies
+## Architecture
+
+```
++----------------+        +--------------------+        +------------------+
+|                |        |                    |        |                  |
+|  Adwisar       |  HTTP  |   adwisar-adapter  |  HTTP  |   Kerlink GW     |
+| (DFKI servers) | <----+ |  (Heroku)          | <----+ |  (LoRa network)  |
+|                |        |                    |        |                  |
++----------------+        +--------------------+        +------------------+
+```
 
 ## Usage
 
