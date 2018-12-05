@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/CDECatapult/adwisar-adapter.svg?style=svg)](https://circleci.com/gh/CDECatapult/adwisar-adapter)
+[![Known Vulnerabilities](https://snyk.io/test/github/CDECatapult/adwisar-adapter/badge.svg)](https://snyk.io/test/github/CDECatapult/adwisar-adapter)
+
 # Adwisar Adapter
 
 Receive the sensor data from Kerlink and send them to Adwisar.
